@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>OAuth Callback – Steven Pin Scheduler</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header><a class="brand" href="./">Steven Pin Scheduler</a></header>
+  <main>
+    <h1>Pinterest authorization</h1>
+    <div id="out" class="card">Waiting for authorization code…</div>
+    <p class="muted">This page runs entirely in your browser and sends nothing anywhere. Paste the code into your app to exchange it for an access token. Codes expire quickly, so use it right away.</p>
+  </main>
+  <script>
+    (function () {
+      var p = new URLSearchParams(window.location.search);
+      var out = document.getElementById('out');
+      var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
+      if (p.get('error')) {
+        out.innerHTML = '<strong>Error:</strong> ' + esc(p.get('error')) + (p.get('error_description') ? ' – ' + esc(p.get('error_description')) : '');
+        return;
+      }
+      var code = p.get('code');
+      if (!code) return;
+      out.innerHTML = '<p><strong>Authorization code:</strong></p><p><span class="code" id="code"></span></p>' +
+        (p.get('state') ? '<p class="muted">state: <span class="code" id="state"></span></p>' : '') +
+        '<button id="copy">Copy code</button>';
+      document.getElementById('code').textContent = code;
+      if (p.get('state')) document.getElementById('state').textContent = p.get('state');
+      document.getElementById('copy').onclick = function () {
+        navigator.clipboard.writeText(code).then(function () { document.getElementById('copy').textContent = 'Copied'; });
+      };
+    })();
+  </script>
+</body>
+</html>
