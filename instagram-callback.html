@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Finish connecting Instagram · CraftFlow</title>
+<style>
+  :root { --bg:#F3F5F8; --surface:#FFFFFF; --ink:#141824; --ink-2:#4A5163; --line:#D9DEE6; --accent:#4B3FE0; --accent-ink:#FFFFFF; --err:#B42318; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0F131A; --surface:#171C25; --ink:#EEF1F6; --ink-2:#AAB2C2; --line:#2C3443; --accent:#8B82FF; --accent-ink:#0F131A; --err:#FF8A80; } }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width:640px; margin:48px auto; padding:0 16px; }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:24px; }
+  h1 { font-size:24px; margin:0 0 8px; }
+  p { color:var(--ink-2); margin:0 0 16px; }
+  textarea { width:100%; box-sizing:border-box; min-height:110px; font:14px/1.4 ui-monospace, Consolas, monospace; color:var(--ink);
+             background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:10px; resize:vertical; }
+  button { margin-top:12px; font:600 15px/1 system-ui, sans-serif; padding:12px 18px; border-radius:10px; border:0;
+           background:var(--accent); color:var(--accent-ink); cursor:pointer; }
+  button:focus-visible, textarea:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+  .err { color:var(--err); }
+  small { display:block; margin-top:16px; color:var(--ink-2); }
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <h1 id="title">Finish connecting Instagram</h1>
+    <p id="intro">Copy this whole address and paste it into CraftFlow: <strong>Settings → Instagram Reels → Finish connecting</strong>.</p>
+    <label for="address" class="visually-hidden" style="position:absolute;left:-9999px">The address to paste into CraftFlow</label>
+    <textarea id="address" readonly></textarea>
+    <button type="button" id="copy">Copy this address</button>
+    <p id="done" aria-live="polite" style="margin:10px 0 0"></p>
+    <small>This page doesn't store or send anything. The sign-in code works once, for a few minutes, and only together
+      with the private key kept in your own CraftFlow app.</small>
+  </div>
+</main>
+<script>
+  (function () {
+    var params = new URLSearchParams(location.search);
+    var box = document.getElementById("address");
+    box.value = location.href;
+    if (params.get("error")) {
+      document.getElementById("title").textContent = "Instagram didn't give access";
+      var intro = document.getElementById("intro");
+      intro.className = "err";
+      intro.textContent = "You may have chosen Cancel. Nothing was connected. Start again from CraftFlow's Settings when you're ready.";
+    } else if (!params.get("code")) {
+      document.getElementById("intro").textContent = "This page is where Instagram sends you after you allow CraftFlow to use your account. Start from CraftFlow's Settings → Instagram Reels → Connect Instagram.";
+    }
+    document.getElementById("copy").addEventListener("click", function () {
+      var done = document.getElementById("done");
+      function ok() { done.textContent = "Copied. Now paste it into CraftFlow."; }
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(box.value).then(ok, function () { box.select(); document.execCommand("copy"); ok(); });
+      } else { box.select(); document.execCommand("copy"); ok(); }
+    });
+  })();
+</script>
+</body>
+</html>
